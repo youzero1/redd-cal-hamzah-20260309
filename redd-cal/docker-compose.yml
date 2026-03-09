@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redd-cal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redd-cal
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_PATH=./data/redd-cal.sqlite
+      - NEXT_PUBLIC_APP_NAME=Redd Cal
+    volumes:
+      - redd-cal-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  redd-cal-data:
+    driver: local
